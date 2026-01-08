@@ -138,9 +138,15 @@ struct DispatchProblem
         #Implied merit order:
         # dr payback_cost < stor/genstor charge cost < stor/genstor discharge cost < borrow cost < unserved energy
 
+        if haskey(sys.attrs, "additional_offset_DispatchProblem")
+            additional_offset = parse(Int, sys.attrs["additional_offset_DispatchProblem"])
+        else
+            additional_offset = 0
+        end
+
         #for storage/genstor
         maxchargetime, maxdischargetime = maxtimetocharge_discharge(sys)
-        min_chargecost = - maxchargetime - 1
+        min_chargecost = - maxchargetime - 1 - additional_offset
         max_dischargecost = - min_chargecost + maxdischargetime + 1
 
         #for demand response-we want to borrow energy in devices with the longest payback window, and payback energy from devices with the smallest payback window
